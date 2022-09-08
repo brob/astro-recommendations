@@ -1,0 +1,18 @@
+---
+import { formatList } from 'astro/dist/runtime/server/render/util';
+import Layout from '../../layouts/Layout.astro'
+import { getRecommendationLinks } from "../../data/prismic";
+import { getDirectusLinks } from "../../data/directus";
+
+
+const recommendations = await getDirectusLinks();
+
+---
+
+<Layout title="Recommendations">
+    {recommendations.map(recommendation => (
+        <div>
+            <h2><a href={'/recommendations/' + recommendation.slug}>{recommendation.author}</a></h2>
+        </div>
+    ))}
+</Layout>

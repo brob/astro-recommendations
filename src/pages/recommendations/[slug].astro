@@ -1,0 +1,37 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import * as prismicH from '@prismicio/helpers'
+import { getRecommendationLinks, getDataFromUid } from "../../data/prismic";
+import { getDirectusLinks, getRecommnedationFromSlug } from "../../data/directus";
+import { renderMarkdown } from "@astrojs/markdown-remark";
+
+export async function getStaticPaths() {
+    const directusDocs = await getDirectusLinks();
+    // const prismicDocs = await getRecommendationLinks();
+    // return prismicDocs.map(doc => ({
+    //     params: {
+    //         uid: doc.uid,
+    //     }
+    // }))
+    return directusDocs.map(doc => ({
+        params: {
+            slug: doc.slug,
+        }
+    }))
+}
+const { slug } = Astro.params;
+
+let recommendation = await getRecommnedationFromSlug(slug)
+let renderedMarkdown = await renderMarkdown(recommendation.body, { })
+
+console.log( renderedMarkdown)
+// const body = prismicH.asHTML(recommendation.data.body)
+---
+
+<Layout title={recommendation.author || 'Anonymous'}>
+   <Fragment set:html={recommendation.bodyblock} />
+   <h1>This is markdown?</h1> 
+   <Fragment set:html={renderedMarkdown.metadata.html} />
+
+   
+</Layout>
